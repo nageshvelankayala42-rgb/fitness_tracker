@@ -1,3 +1,4 @@
+```jsx
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,6 +8,7 @@ import "./Login.css";
 function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -18,18 +20,28 @@ function Login() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:8080/api/users/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://fitness-tracker-backend-j7zh.onrender.com/api/users/login",
+        {
+          email,
+          password,
+        }
+      );
+
       login(response.data);
       navigate("/dashboard");
     } catch (error) {
       if (error.response?.status === 401) {
         setErrorMessage("Invalid email or password");
+      } else if (error.response?.status === 404) {
+        setErrorMessage("Login endpoint not found. Please check the backend API.");
       } else {
-        setErrorMessage("Unable to connect to the server. Please try again.");
+        setErrorMessage(
+          "Unable to connect to the server. Please try again."
+        );
       }
+
+      console.error("Login error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -47,8 +59,8 @@ function Login() {
           <div className="visual-copy">
             <h2>Train harder. Recover smarter.</h2>
             <p>
-              Track your workouts, monitor progress, and stay consistent with every rep,
-              run, and recovery session.
+              Track your workouts, monitor progress, and stay consistent with
+              every rep, run, and recovery session.
             </p>
 
             <div className="metric-row">
@@ -56,10 +68,12 @@ function Login() {
                 <strong>12k+</strong>
                 <span>Members</span>
               </div>
+
               <div className="metric">
                 <strong>94%</strong>
                 <span>Retention</span>
               </div>
+
               <div className="metric">
                 <strong>24/7</strong>
                 <span>Support</span>
@@ -107,7 +121,11 @@ function Login() {
                 </p>
               )}
 
-              <button type="submit" className="submit-btn" disabled={isLoading}>
+              <button
+                type="submit"
+                className="submit-btn"
+                disabled={isLoading}
+              >
                 {isLoading ? "Logging in..." : "Login"}
               </button>
             </form>
@@ -123,3 +141,4 @@ function Login() {
 }
 
 export default Login;
+```
